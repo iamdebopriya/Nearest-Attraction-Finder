@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nearest Attraction Finder</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #fff3e0; /* Light beige */
+            font-family: 'Tajawal', sans-serif;
+            color: #4d2600; /* Dark brown */
+        }
+        h1 {
+            font-family: 'Kaushan Script', cursive;
+            color: #b22222; /* Indian red */
+            text-shadow: 2px 2px #f4a460; /* Sand-colored shadow */
+            animation: textGlow 2s infinite alternate;
+        }
+        @keyframes textGlow {
+            0% {
+                text-shadow: 2px 2px 5px #f4a460;
+            }
+            100% {
+                text-shadow: 4px 4px 10px #cd853f;
+            }
+        }
+        .container {
+            margin-top: 50px;
+            background-color: #ffedd5; /* Light tan background */
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border: 2px solid #d2a679; /* Light brown border */
+        }
+        label {
+            font-weight: bold;
+            color: #8b4513; /* Saddle brown */
+        }
+        .form-control, .form-select {
+            border: 1px solid #cd853f; /* Peru border */
+        }
+        button {
+            background-color: #b22222; /* Indian red */
+            border: none;
+            color: #ffffff;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #8b0000; /* Darker red */
+        }
+        .list-group-item {
+            background-color: #fff5e1; /* Very light tan */
+            border: 1px solid #d2a679;
+        }
+        .map-container {
+            border: 2px solid #d2a679;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .alert {
+            background-color: #f8d7da; /* Light pink for error */
+            color: #721c24; /* Dark red for error text */
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Nearest Attraction Finder</h1>
+        <form method="POST" class="mt-4">
+            <div class="mb-3">
+                <label for="place" class="form-label">Enter a Place:</label>
+                <input type="text" class="form-control" id="place" name="place" placeholder="E.g., Taj Mahal" required>
+            </div>
+            <div class="mb-3">
+                <label for="attraction" class="form-label">Select Attraction Type:</label>
+                <select class="form-select" id="attraction" name="attraction" required>
+                    <option value="tourist_spots">Tourist Spots</option>
+                    <option value="restaurants">Restaurants</option>
+                    <option value="hotels">Hotels</option>
+                    <option value="hospitals">Hospitals</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Find Nearest Attractions</button>
+        </form>
+
+        {% if error %}
+        <div class="alert alert-danger mt-4" role="alert">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        {% if attractions %}
+        <h3 class="mt-5">Results for "{{ place_name }}" - {{ attraction_type }}</h3>
+        <ul class="list-group mt-3">
+            {% for attraction in attractions %}
+            <li class="list-group-item">
+                <strong>{{ attraction.name }}</strong> - {{ attraction.distance | round(2) }} km away
+            </li>
+            {% endfor %}
+        </ul>
+        <div class="map-container mt-4">
+            {{ map_html|safe }}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
