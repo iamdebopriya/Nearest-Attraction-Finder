@@ -29,7 +29,7 @@ def index():
         if place_name and attraction_type:
             user_location = get_coordinates(place_name)
             if user_location:
-                attractions_sorted = find_nearest_places(user_location, attraction_type, radius=100000)
+                attractions_sorted = find_nearest_places(user_location, attraction_type, radius=30000)
 
                 # Create a map centered at the user's location
                 map_object = folium.Map(location=user_location, zoom_start=12)
@@ -52,13 +52,14 @@ def index():
     return render_template("index1.html")
 
 # Function to find nearest places based on user input
-def find_nearest_places(user_location, attraction_type, radius=100000):
+def find_nearest_places(user_location, attraction_type, radius=30000):
     # OSM tags for various attraction types
     attraction_types = {
         "tourist_spots": '["tourism"~"attraction|museum|monument|zoo|theme_park|viewpoint"]',
         "restaurants": '["amenity"="restaurant"]',
         "hotels": '["tourism"="hotel"]',
-        "hospitals": '["amenity"="hospital"]'
+        "hospitals": '["amenity"="hospital"]',
+        "police_stations": '["amenity"="police"]' 
     }
 
     if attraction_type not in attraction_types:
@@ -86,7 +87,7 @@ def find_nearest_places(user_location, attraction_type, radius=100000):
     # Sort attractions by distance and return the results
     attractions_sorted = sorted(attractions, key=lambda x: x['distance'])
     
-    return attractions_sorted[:20]  # Return top 20 nearest attractions within 50-100 km
+    return attractions_sorted[:20]  
 
 if __name__ == "__main__":
     app.run(debug=True)
