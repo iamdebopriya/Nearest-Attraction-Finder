@@ -35,11 +35,11 @@ def index():
                 map_object = folium.Map(location=user_location, zoom_start=12)
                 folium.Marker(user_location, popup="Your Location", icon=folium.Icon(color="blue")).add_to(map_object)
 
-                # Add attractions to the map
+                # Add attractions to the map with a link in the popup
                 for attraction in attractions_sorted:
                     folium.Marker(
                         attraction['location'],
-                        popup=f"{attraction['name']} ({attraction['distance']:.2f} km away)",
+                        popup=f'<a href="{attraction["link"]}" target="_blank">{attraction["name"]} ({attraction["distance"]:.2f} km away)</a>',
                         icon=folium.Icon(color="green")
                     ).add_to(map_object)
 
@@ -52,14 +52,14 @@ def index():
     return render_template("index1.html")
 
 # Function to find nearest places based on user input
-def find_nearest_places(user_location, attraction_type, radius=30000):
+def find_nearest_places(user_location, attraction_type, radius=30000):  # Radius set to 30 km
     # OSM tags for various attraction types
     attraction_types = {
         "tourist_spots": '["tourism"~"attraction|museum|monument|zoo|theme_park|viewpoint"]',
         "restaurants": '["amenity"="restaurant"]',
         "hotels": '["tourism"="hotel"]',
         "hospitals": '["amenity"="hospital"]',
-        "police_stations": '["amenity"="police"]' 
+        "police_stations": '["amenity"="police"]'  # New entry for police stations
     }
 
     if attraction_type not in attraction_types:
@@ -78,16 +78,19 @@ def find_nearest_places(user_location, attraction_type, radius=30000):
         if "name" in node.tags:
             attraction_location = (node.lat, node.lon)
             distance = geodesic(user_location, attraction_location).km
+            google_maps_link = f"https://www.google.com/maps?q={node.lat},{node.lon}"
+            
             attractions.append({
                 'name': node.tags.get("name"),
                 'location': attraction_location,
-                'distance': distance
+                'distance': distance,
+                'link': google_maps_link
             })
 
     # Sort attractions by distance and return the results
     attractions_sorted = sorted(attractions, key=lambda x: x['distance'])
     
-    return attractions_sorted[:20]  
+    return attractions_sorted[:20]  # Return top 20 nearest attractions
 
 if __name__ == "__main__":
     app.run(debug=True)
