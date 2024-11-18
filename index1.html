@@ -99,6 +99,8 @@
             {% for attraction in attractions %}
             <li class="list-group-item">
                 <strong>{{ attraction.name }}</strong> - {{ attraction.distance | round(2) }} km away
+                <br>
+                <a href="{{ attraction.link }}" target="_blank" class="btn btn-outline-primary mt-2">View on Google Maps</a>
             </li>
             {% endfor %}
         </ul>
